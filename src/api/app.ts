@@ -1,4 +1,3 @@
-// src/api/api.ts
 import axios from "axios";
 
 const api = axios.create({
@@ -17,11 +16,10 @@ export default api;
 
 // Types
 export interface User {
-  private _id(_id: any): void;
-  role: ReactNode;
-  email: ReactNode;
-  name: ReactNode;
-  id: string;
+  _id: string; 
+  role: string; 
+  email: string; 
+  name: string; 
   phone: string;
 }
 
