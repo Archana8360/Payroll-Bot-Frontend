@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api", // change to your backend URL
+  baseURL: "https://payroll-bot-backend.vercel.app", // change to your backend URL
 });
 
 api.interceptors.request.use((config) => {
