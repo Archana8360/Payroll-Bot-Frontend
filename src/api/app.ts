@@ -24,7 +24,7 @@ export interface User {
 }
 
 export interface Question {
-  id: string;
+  _id: string;
   question: string;
   answer: string;
 }
