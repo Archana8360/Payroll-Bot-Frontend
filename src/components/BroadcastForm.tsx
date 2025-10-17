@@ -1,4 +1,3 @@
-// src/components/BroadcastForm.tsx
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import api from "../api/app";
@@ -10,14 +9,13 @@ interface User {
   phone: string;
   role: string;
 }
+const roles = [
+  { label: "Admin", value: "admin" },
+  { label: "HR", value: "hr" },
+  { label: "Employee", value: "employee" },
+];
 
 export default function BroadcastForm() {
-  const [roles, setRoles] = useState<{ label: string; value: string }[]>([
-    { label: "Admin", value: "admin" },
-    { label: "HR", value: "hr" },
-    { label: "Employee", value: "employee" },
-  ]);
-
   const [selectedRoles, setSelectedRoles] = useState<{ label: string; value: string }[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<{ label: string; value: string }[]>([]);
@@ -36,9 +34,7 @@ export default function BroadcastForm() {
     const fetchUsers = async () => {
       try {
         const rolesQuery = selectedRoles.map((r) => r.value).join(",");
-        const res = await api.get(`/users?roles=${rolesQuery}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+        const res = await api.get(`/users?roles=${rolesQuery}`);
         setUsers(res.data);
       } catch (err: any) {
         toast.error(err.response?.data?.message || "Failed to fetch users");
@@ -75,17 +71,12 @@ export default function BroadcastForm() {
   // Handle sending broadcast
   const handleSend = async () => {
     if (!message.trim()) return toast.error("Message cannot be empty");
-    if (selectedUsers.length === 0) return toast.error("Select at least one user");
+    if (selectedUsers.length === 0)
+      return toast.error("Select at least one user");
 
     try {
-      const recipients = selectedUsers.map((u) => u.value).join(",");
-      await api.post(
-        "/broadcast",
-        { message, recipients },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      const recipients = selectedUsers.map((u) => u.value);
+      await api.post("/broadcast", { message, recipients });
 
       toast.success("Broadcast sent successfully!");
       setMessage("");
