@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://payroll-bot-backend.vercel.app", // change to your backend URL
+  baseURL: "http://localhost:3000/api", 
 });
 
 api.interceptors.request.use((config) => {
@@ -14,7 +14,6 @@ api.interceptors.request.use((config) => {
 
 export default api;
 
-// Types
 export interface User {
   _id: string; 
   role: string; 

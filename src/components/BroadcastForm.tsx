@@ -17,7 +17,7 @@ const roles = [
 
 export default function BroadcastForm() {
   const [selectedRoles, setSelectedRoles] = useState<{ label: string; value: string }[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]);      
   const [selectedUsers, setSelectedUsers] = useState<{ label: string; value: string }[]>([]);
   const [message, setMessage] = useState("");
   const [allRolesSelected, setAllRolesSelected] = useState(false);
@@ -75,7 +75,7 @@ export default function BroadcastForm() {
       return toast.error("Select at least one user");
 
     try {
-      const recipients = selectedUsers.map((u) => u.value);
+      const recipients = selectedUsers.map((u) => u.value).join(",");
       await api.post("/broadcast", { message, recipients });
 
       toast.success("Broadcast sent successfully!");
