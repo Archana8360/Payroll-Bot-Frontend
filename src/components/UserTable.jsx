@@ -1,13 +1,13 @@
-// src/components/UsersTable.tsx
+import React from "react";
 import { useEffect, useState } from "react";
-import api, { type User } from "../api/app";
+import api from "../api/app";
 import toast from "react-hot-toast";
 
 export default function UsersTable() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [editingUserId, setEditingUserId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,7 +18,7 @@ export default function UsersTable() {
 
   const fetchUsers = async () => {
     try {
-      const res = await api.get<User[]>("/users");
+      const res = await api.get("/users");
       setUsers(res.data);
     } catch {
       toast.error("Failed to load users");
@@ -29,46 +29,42 @@ export default function UsersTable() {
     fetchUsers();
   }, []);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Add User
   const handleAddUser = async () => {
     const { name, email, phone, role, password } = formData;
     if (!name || !email || !phone || !role || !password)
       return toast.error("All fields are required");
 
     try {
-      const res = await api.post<User>("/users", formData);
+      const res = await api.post("/users", formData);
       setUsers([...users, res.data]);
       resetForm();
       toast.success("User created successfully!");
-    } catch (err: any) {
+    } catch (err) {
       toast.error(err.response?.data?.message || "Failed to create user");
     }
   };
 
-  // Update User (without password)
   const handleUpdateUser = async () => {
-    const { name, email, phone, role } = formData; // password excluded
+    const { name, email, phone, role } = formData;
     if (!name || !email || !phone || !role)
       return toast.error("All fields except password are required");
 
     try {
-      const updates = { name, email, phone, role }; // password removed
-      const res = await api.put<User>(`/users/${editingUserId}`, updates);
+      const updates = { name, email, phone, role };
+      const res = await api.put(`/users/${editingUserId}`, updates);
       setUsers(users.map((u) => (u._id === editingUserId ? res.data : u)));
       resetForm();
       toast.success("User updated successfully!");
-    } catch (err: any) {
+    } catch (err) {
       toast.error(err.response?.data?.message || "Failed to update user");
     }
   };
 
-  const handleRemove = async (id: string) => {
+  const handleRemove = async (id) => {
     try {
       await api.delete(`/users/${id}`);
       setUsers(users.filter((u) => u._id !== id));
@@ -78,13 +74,13 @@ export default function UsersTable() {
     }
   };
 
-  const handleEditClick = (user: User) => {
+  const handleEditClick = (user) => {
     setFormData({
       name: user.name,
       email: user.email,
       phone: user.phone,
       role: user.role,
-      password: "", // always blank when editing
+      password: "",
     });
     setEditingUserId(user._id);
     setIsEditing(true);
@@ -228,7 +224,6 @@ export default function UsersTable() {
               <option value="employee">Employee</option>
             </select>
 
-            {/* Password only for creation */}
             {!isEditing && (
               <input
                 type="password"

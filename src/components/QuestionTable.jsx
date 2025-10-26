@@ -1,17 +1,17 @@
-// src/components/QuestionsTable.tsx
+import React from "react";
 import { useEffect, useState } from "react";
-import api, { type Question } from "../api/app";
+import api from "../api/app";
 import toast from "react-hot-toast";
 
 export default function QuestionsTable() {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState([]);
   const [q, setQ] = useState("");
   const [a, setA] = useState("");
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState(null);
 
   const fetchQuestions = async () => {
     try {
-      const res = await api.get<Question[]>("/questions");
+      const res = await api.get("/questions");
       setQuestions(res.data);
     } catch {
       toast.error("Failed to load questions");
@@ -28,10 +28,7 @@ export default function QuestionsTable() {
     if (editingId) {
       // Update existing question
       try {
-        const res = await api.put<Question>(
-          `/questions/${editingId}`,
-          { question: q, answer: a }
-        );
+        const res = await api.put(`/questions/${editingId}`, { question: q, answer: a });
         setQuestions(
           questions.map((item) => (item._id === editingId ? res.data : item))
         );
@@ -45,7 +42,7 @@ export default function QuestionsTable() {
     } else {
       // Add new question
       try {
-        const res = await api.post<Question>("/questions", { question: q, answer: a });
+        const res = await api.post("/questions", { question: q, answer: a });
         setQuestions([...questions, res.data]);
         setQ("");
         setA("");
@@ -56,13 +53,13 @@ export default function QuestionsTable() {
     }
   };
 
-  const handleEdit = (item: Question) => {
+  const handleEdit = (item) => {
     setQ(item.question);
     setA(item.answer);
     setEditingId(item._id);
   };
 
-  const handleRemove = async (id: string) => {
+  const handleRemove = async (id) => {
     try {
       await api.delete(`/questions/${id}`);
       setQuestions(questions.filter((item) => item._id !== id));
@@ -98,7 +95,9 @@ export default function QuestionsTable() {
           onChange={(e) => setA(e.target.value)}
         />
         <button
-          className={`px-4 rounded text-white ${editingId ? "bg-blue-500 hover:bg-blue-600" : "bg-green-500 hover:bg-green-600"}`}
+          className={`px-4 rounded text-white ${
+            editingId ? "bg-blue-500 hover:bg-blue-600" : "bg-green-500 hover:bg-green-600"
+          }`}
           onClick={handleAddOrUpdate}
         >
           {editingId ? "Update" : "Add"}

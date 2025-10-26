@@ -1,4 +1,5 @@
-// src/pages/Dashboard.tsx
+// src/pages/Dashboard.jsx
+import React from "react";
 import Sidebar from "../components/Sidebar";
 import BroadcastForm from "../components/BroadcastForm";
 import UsersTable from "../components/UserTable";
