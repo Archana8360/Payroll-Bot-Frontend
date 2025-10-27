@@ -1,14 +1,9 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import api from "../api/app";
 import toast from "react-hot-toast";
 
-interface User {
-  _id: string;
-  name: string;
-  phone: string;
-  role: string;
-}
 const roles = [
   { label: "Admin", value: "admin" },
   { label: "HR", value: "hr" },
@@ -16,9 +11,9 @@ const roles = [
 ];
 
 export default function BroadcastForm() {
-  const [selectedRoles, setSelectedRoles] = useState<{ label: string; value: string }[]>([]);
-  const [users, setUsers] = useState<User[]>([]);      
-  const [selectedUsers, setSelectedUsers] = useState<{ label: string; value: string }[]>([]);
+  const [selectedRoles, setSelectedRoles] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [allRolesSelected, setAllRolesSelected] = useState(false);
   const [allUsersSelected, setAllUsersSelected] = useState(false);
@@ -36,7 +31,7 @@ export default function BroadcastForm() {
         const rolesQuery = selectedRoles.map((r) => r.value).join(",");
         const res = await api.get(`/users?roles=${rolesQuery}`);
         setUsers(res.data);
-      } catch (err: any) {
+      } catch (err) {
         toast.error(err.response?.data?.message || "Failed to fetch users");
       }
     };
@@ -71,8 +66,7 @@ export default function BroadcastForm() {
   // Handle sending broadcast
   const handleSend = async () => {
     if (!message.trim()) return toast.error("Message cannot be empty");
-    if (selectedUsers.length === 0)
-      return toast.error("Select at least one user");
+    if (selectedUsers.length === 0) return toast.error("Select at least one user");
 
     try {
       const recipients = selectedUsers.map((u) => u.value).join(",");
@@ -85,14 +79,14 @@ export default function BroadcastForm() {
       setUsers([]);
       setAllRolesSelected(false);
       setAllUsersSelected(false);
-    } catch (err: any) {
+    } catch (err) {
       toast.error(err.response?.data?.message || "Failed to send broadcast");
     }
   };
 
   // Light theme styles for react-select
   const lightSelectStyles = {
-    control: (base: any) => ({
+    control: (base) => ({
       ...base,
       backgroundColor: "#fff",
       borderColor: "#d1d5db",
@@ -100,28 +94,28 @@ export default function BroadcastForm() {
       "&:hover": { borderColor: "#60a5fa" },
       minHeight: "44px",
     }),
-    menu: (base: any) => ({
+    menu: (base) => ({
       ...base,
       backgroundColor: "#fff",
       borderRadius: "8px",
       boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
       zIndex: 100,
     }),
-    option: (base: any, state: any) => ({
+    option: (base, state) => ({
       ...base,
       backgroundColor: state.isFocused ? "#eff6ff" : "#fff",
       color: "#111827",
       cursor: "pointer",
     }),
-    multiValue: (base: any) => ({
+    multiValue: (base) => ({
       ...base,
       backgroundColor: "#e0f2fe",
     }),
-    multiValueLabel: (base: any) => ({
+    multiValueLabel: (base) => ({
       ...base,
       color: "#0369a1",
     }),
-    multiValueRemove: (base: any) => ({
+    multiValueRemove: (base) => ({
       ...base,
       color: "#0369a1",
       ":hover": { backgroundColor: "#0369a1", color: "#fff" },
@@ -152,7 +146,7 @@ export default function BroadcastForm() {
             styles={lightSelectStyles}
             options={roles}
             value={selectedRoles}
-            onChange={(opts: any) => setSelectedRoles(opts || [])}
+            onChange={(opts) => setSelectedRoles(opts || [])}
             placeholder="Choose one or more roles..."
           />
         </div>
@@ -178,7 +172,7 @@ export default function BroadcastForm() {
                 value: u.phone,
               }))}
               value={selectedUsers}
-              onChange={(opts: any) => setSelectedUsers(opts || [])}
+              onChange={(opts) => setSelectedUsers(opts || [])}
               placeholder="Choose one or more users..."
             />
           </div>
